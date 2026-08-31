@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>海克斯大乱斗查询</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>LOL 数据查询</h1>
+      <p id="statusText">准备读取服务器缓存...</p>
+    </div>
+    <div class="topbar-actions">
+      <div id="modeTabs" class="mode-tabs" role="tablist" aria-label="数据模式">
+        <button id="aramModeTab" class="mode-tab active" type="button" role="tab" aria-selected="true">海克斯大乱斗</button>
+        <button id="rankedModeTab" class="mode-tab" type="button" role="tab" aria-selected="false">排位</button>
+      </div>
+      <button id="refreshBtn" type="button">刷新数据</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar">
+      <div class="search-box">
+        <input id="heroSearch" type="search" placeholder="搜索英雄：布兰德 / 复仇焰魂 / brand / 火男" autocomplete="off">
+        <span id="heroCount">0 / 0</span>
+      </div>
+      <div id="aramFilters" class="tier-filters" aria-label="英雄梯度筛选"></div>
+      <div id="rankedFilters" class="ranked-filters hidden">
+        <div id="positionFilters" class="position-filters" aria-label="分路筛选"></div>
+        <select id="tierSelect" class="tier-select" aria-label="段位筛选"></select>
+      </div>
+      <div id="heroList" class="hero-list"></div>
+    </aside>
+
+    <section class="detail">
+      <div id="emptyState" class="empty-state">请选择一个英雄</div>
+      <div id="heroDetail" class="hero-detail hidden">
+        <div class="detail-head">
+          <div class="selected-hero">
+            <button id="backToListBtn" class="back-to-list" type="button" aria-label="返回英雄列表">← 返回</button>
+            <img id="detailImage" alt="" width="64" height="64">
+            <div>
+              <div class="detail-title-row">
+                <h2 id="detailName"></h2>
+                <div class="detail-tabs" role="tablist" aria-label="英雄数据类型">
+                  <button id="augmentsTab" class="detail-tab active" type="button" role="tab" aria-selected="true">海克斯</button>
+                  <button id="itemsTab" class="detail-tab" type="button" role="tab" aria-selected="false">装备</button>
+                  <button id="runesTab" class="detail-tab hidden" type="button" role="tab" aria-selected="false">符文</button>
+                </div>
+              </div>
+              <p id="detailSubName"></p>
+            </div>
+          </div>
+          <a id="opggLink" href="#" target="_blank" rel="noreferrer">打开 OP.GG</a>
+        </div>
+        <div id="detailStatus" class="notice"></div>
+        <div id="augmentGroups" class="augment-groups"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

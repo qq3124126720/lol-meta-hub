@@ -1,0 +1,14 @@
+services:
+  lol-meta-hub:
+    build: .
+    container_name: lol-meta-hub
+    restart: unless-stopped
+    environment:
+      - TZ=Asia/Shanghai
+      - CACHE_FILE=/data/aram-mayhem-cache.json
+      - REFRESH_HOUR=4
+      - MAX_CONCURRENCY=1
+    ports:
+      - "8080:3000"
+    volumes:
+      - /opt/aram-mayhem-data:/data
