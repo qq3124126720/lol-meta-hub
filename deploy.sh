@@ -4,7 +4,7 @@
 set -euo pipefail
 
 SERVER=root@119.91.251.150
-REMOTE_DIR=/opt/aram-mayhem
+REMOTE_DIR=/opt/lol-meta-hub
 CONTAINER_NAME=lol-meta-hub
 HEALTH_URL=http://119.91.251.150:8080/api/health
 

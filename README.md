@@ -32,7 +32,7 @@ deploy.sh            # 一键部署（服务器地址等敏感信息见 DEPLOY.l
 
 ## 数据流与缓存
 
-1. 启动时读缓存文件 `CACHE_FILE`（容器内 `/data/aram-mayhem-cache.json`，约 15MB）；没有缓存则立即触发一次全量抓取。
+1. 启动时读缓存文件 `CACHE_FILE`（容器内 `/data/lol-meta-hub-cache.json`，约 15MB）；没有缓存则立即触发一次全量抓取。
 2. 全量抓取：先抓 OP.GG 模式首页拿英雄列表（约 173 个），再逐个抓每个英雄的 `/augments` 和 `/items` 页面（串行，`MAX_CONCURRENCY=1`，带重试和随机延迟，全程约 3~4 分钟）。
 3. 抓取过程中新数据先放 `refreshState.draft*`，前端能边抓边看；全部完成后原子写缓存（tmp + rename）并切换 `cache`。
 4. 每天北京时间 **04:00**（`REFRESH_HOUR=4`，依赖容器 TZ=Asia/Shanghai）自动刷新一次。
@@ -69,7 +69,7 @@ deploy.sh            # 一键部署（服务器地址等敏感信息见 DEPLOY.l
 脚本做四件事：rsync 同步代码 → `docker compose build` → `docker compose up -d` → 健康检查。
 
 - **代码是打进镜像的，不是挂载**：改了任何文件都必须重建镜像才生效（deploy.sh 已处理）。只有 `/data` 是持久卷。
-- 服务器数据目录含两个缓存：`aram-mayhem-cache.json`（大乱斗，~15MB）与 `aram-mayhem-ranked-cache.json`（排位，~10MB）。重建容器不丢。
+- 服务器数据目录含两个缓存：`lol-meta-hub-cache.json`（大乱斗，~15MB）与 `lol-meta-hub-ranked-cache.json`（排位，~10MB）。重建容器不丢。
 
 ## 环境变量
 

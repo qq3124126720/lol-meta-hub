@@ -5,10 +5,11 @@ services:
     restart: unless-stopped
     environment:
       - TZ=Asia/Shanghai
-      - CACHE_FILE=/data/aram-mayhem-cache.json
+      - CACHE_FILE=/data/lol-meta-hub-cache.json
+      - RANKED_CACHE_FILE=/data/lol-meta-hub-ranked-cache.json
       - REFRESH_HOUR=4
       - MAX_CONCURRENCY=1
     ports:
       - "8080:3000"
     volumes:
-      - /opt/aram-mayhem-data:/data
+      - /opt/lol-meta-hub-data:/data

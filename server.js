@@ -10,7 +10,7 @@ const MODE_PREFIX = '/zh-cn/lol/modes/aram-mayhem';
 const MAX_CONCURRENCY = Number(process.env.MAX_CONCURRENCY || 1);
 const MAX_RETRIES = Number(process.env.MAX_RETRIES || 2);
 const REQUEST_DELAY = Number(process.env.REQUEST_DELAY || 220);
-const CACHE_FILE = process.env.CACHE_FILE || '/data/aram-mayhem-cache.json';
+const CACHE_FILE = process.env.CACHE_FILE || '/data/lol-meta-hub-cache.json';
 const CACHE_VERSION = 1;
 const REFRESH_HOUR = Number(process.env.REFRESH_HOUR || 4);
 const STATIC_TYPES = {
@@ -121,7 +121,7 @@ const ALIASES = {
 };
 
 // ===== 排位模式 =====
-const RANKED_CACHE_FILE = process.env.RANKED_CACHE_FILE || '/data/aram-mayhem-ranked-cache.json';
+const RANKED_CACHE_FILE = process.env.RANKED_CACHE_FILE || '/data/lol-meta-hub-ranked-cache.json';
 const RANKED_CACHE_VERSION = 3;
 const RANKED_MODE_PREFIX = '/zh-cn/lol/champions';
 const RANKED_TIERS = (process.env.RANKED_TIERS
@@ -1105,7 +1105,7 @@ function serializeState() {
   const draftFailedCount = Object.keys(refreshState.draftErrors).length;
   return {
     ok: true,
-    mode: 'aram-mayhem',
+    mode: 'lol-meta-hub',
     status: cache ? (refreshState.refreshing ? 'refreshing' : 'ready') : refreshState.status,
     refreshing: refreshState.refreshing,
     reason: refreshState.reason,
@@ -1667,7 +1667,7 @@ const server = http.createServer(async (req, res) => {
     return;
   }
   if (url.pathname === '/api/health') {
-    sendJson(res, 200, { ok: true, service: 'aram-mayhem', time: new Date().toISOString() });
+    sendJson(res, 200, { ok: true, service: 'lol-meta-hub', time: new Date().toISOString() });
     return;
   }
   if (url.pathname === '/api/refresh') {
