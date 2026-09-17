@@ -15,6 +15,7 @@
 - **英雄中文名**来自 Riot Data Dragon（`getDDragonChampions`，zh_CN）。注意 zh_CN 的 ddragon 数据里 `name` 字段是**称号**（如金克丝的 name 是"暴走萝莉"）、`title` 才是**本名**（"金克丝"），本项目沿用这一结构：列表显示的是称号，搜索文本里称号和本名都能搜到。
 - **外号（昵称）**在 `server.js` 的 `ALIASES` 常量里手工维护，key 是 OP.GG 的 slug。补充外号时注意：称号或本名已包含的叫法（如"蜘蛛"⊂"蜘蛛女皇"、"天使"⊂"正义天使"）不必再加，搜索是子串匹配。**改 ALIASES 后必须触发一次全量刷新才会生效**（外号在 `mergeChampions` 时合并进缓存；`/api/refresh?force=1`，或等每日 4 点自动刷新，约 4~15 分钟跑完）。
 - **图片走本站代理** `/api/image?url=...`，白名单 `IMAGE_HOSTS`（opgg-static / ddragon / communitydragon），新增图片域名要改这个白名单。
+- **OP.GG 图标 CDN 要求转换参数**（2026-09-16）：`opgg-static` 上 `/latest/` 路径的裸 URL 会 403，页面实际渲染带 `?image=q_auto:good,f_webp,w_64,h_64`。海克斯图标解析时已自动补参数；`/api/image` 代理对 403 且无 `image` 参数的 opgg-static 请求会补参重试一次，兼容旧缓存。
 - OP.GG 路径白名单 `isAllowedOpggPath`，防止代理被滥用。
 - **移动端视图**（2026-08-31）：≤980px 宽度下，英雄列表与详情互斥显示。未选英雄时只见列表，选中后切到详情视图（顶部出现「← 返回」按钮，点击清空选中回到列表）。通过 `body.mobile-detail-open` class 切换，桌面端不受影响。
 
@@ -96,3 +97,4 @@ deploy.sh            # 一键部署（服务器地址等敏感信息见 DEPLOY.l
 - 2026-08-28：大幅扩充 `ALIASES` 外号表。
 - 2026-08-29：上线**排位模式**，含符文树/召唤师技能/技能加点。
 - 2026-08-31：项目改名 `aram-mayhem` → `lol-meta-hub`；新增移动端视图切换（列表/详情互斥显示，详情顶部加返回按钮）。
+- 2026-09-16：修复海克斯符文图片 403（OP.GG CDN 要求 `image=` 转换参数），代理 403 补参重试 + 解析层直接生成带参 URL。

@@ -29,6 +29,9 @@ const IMAGE_HOSTS = new Set([
   'ddragon.leagueoflegends.com',
   'raw.communitydragon.org'
 ]);
+const OPGG_IMAGE_HOST = 'opgg-static.akamaized.net';
+// OP.GG CDN 拒绝不带转换参数的 latest 图标路径，页面实际渲染时会附加该参数
+const OPGG_IMAGE_TRANSFORM = 'q_auto:good,f_webp,w_64,h_64';
 const ALIASES = {
   ahri: ['狐狸'],
   akali: ['akl'],
@@ -319,6 +322,14 @@ function stripTags(value) {
 
 function cleanImageUrl(value) {
   return decodeHtml(value || '');
+}
+
+function ensureOpggImageTransform(value) {
+  const url = cleanImageUrl(value);
+  if (!url || !url.includes(OPGG_IMAGE_HOST) || url.includes('image=')) {
+    return url;
+  }
+  return `${url}${url.includes('?') ? '&' : '?'}image=${OPGG_IMAGE_TRANSFORM}`;
 }
 
 function proxyImageUrl(value) {
@@ -612,7 +623,7 @@ function normalizeAugment(item) {
     id: item.id,
     key: item.key,
     name: item.name,
-    icon: proxyImageUrl(item.largeIcon || item.smallIcon || ''),
+    icon: proxyImageUrl(ensureOpggImageTransform(item.largeIcon || item.smallIcon || '')),
     rarity: Number(item.rarity),
     group: rarityToGroup(Number(item.rarity)),
     pickRate: Number.isFinite(Number(item.popular)) ? Number(item.popular) : null,
@@ -1615,13 +1626,21 @@ async function handleImage(res, url) {
     sendJson(res, 403, { error: '不允许的图片域名' });
     return;
   }
-  try {
-    const upstream = await fetchWithTimeout(target.href, {
+  async function fetchUpstream(href) {
+    return fetchWithTimeout(href, {
       headers: {
         'User-Agent': 'Mozilla/5.0',
         'Accept': 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8'
       }
     });
+  }
+  try {
+    let upstream = await fetchUpstream(target.href);
+    if (!upstream.ok && target.hostname === OPGG_IMAGE_HOST && !target.searchParams.has('image')) {
+      // 兼容旧缓存里不带转换参数的 OP.GG 图标地址
+      const retryHref = `${target.origin}${target.pathname}${target.search}${target.search ? '&' : '?'}image=${OPGG_IMAGE_TRANSFORM}`;
+      upstream = await fetchUpstream(retryHref);
+    }
     if (!upstream.ok) {
       sendJson(res, upstream.status, { error: `图片请求失败 ${upstream.status}` });
       return;
